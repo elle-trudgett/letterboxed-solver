@@ -69,3 +69,17 @@ def test_copy():
     assert len(dictionary.words) == 3, (
         "Original dictionary should not have been modified"
     )
+
+
+def test_iter():
+    dictionary: Dictionary = Dictionary(["bravo", "alpha"])
+    assert list(dictionary) == ["ALPHA", "BRAVO"], (
+        "Dictionary should iterate over uppercase words in alphabetical order"
+    )
+
+    dictionary.add("delta")
+    dictionary.add("charlie")
+
+    assert list(dictionary) == ["ALPHA", "BRAVO", "CHARLIE", "DELTA"], (
+        "Dictionary should iterate over uppercase words in alphabetical order"
+    )

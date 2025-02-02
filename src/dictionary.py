@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from typing import Iterator
 
 from src.letterbox import LetterBox
 from src.side import Side
@@ -8,10 +9,12 @@ from src.utils import upper_alpha
 @dataclass
 class Dictionary:
     _words: list[str] = field(default_factory=list)
+    _sorted: bool = False
 
     def __post_init__(self):
         self._words = list(set(upper_alpha(w) for w in self._words))
         self._words.sort()
+        _sorted = True
 
     def add(self, word: str) -> None:
         word = upper_alpha(word)
@@ -26,6 +29,7 @@ class Dictionary:
                 return
 
         self._words.append(word)
+        self._sorted = False
 
     def prune_side(self, side: Side) -> None:
         self._words = list(filter(lambda w: side.valid_word(w), self._words))
@@ -40,6 +44,7 @@ class Dictionary:
 
     @property
     def words(self) -> list[str]:
+        self._words.sort() if not self._sorted else ...
         return list(self._words)
 
     @classmethod
@@ -59,7 +64,6 @@ class Dictionary:
         return len(self._words)
 
     def __str__(self) -> str:
-        word_preview: str = ""
         if len(self._words) <= 4:
             word_preview = ", ".join(self._words)
         else:
@@ -70,3 +74,8 @@ class Dictionary:
         return (
             f"Dictionary({len(self)} words{': ' if word_preview else ''}{word_preview})"
         )
+
+    def __iter__(self) -> Iterator[str]:
+        self._words.sort() if not self._sorted else ...
+        for word in self._words:
+            yield word
