@@ -2,35 +2,30 @@
 
 [![Tests](https://github.com/elle-trudgett/letterboxed-solver/actions/workflows/tests.yml/badge.svg)](https://github.com/elle-trudgett/letterboxed-solver/actions/workflows/tests.yml)
 
-solver for nyt letterboxed puzzle
+A solver for the NYT Letterboxed puzzle.
 
-### install
-
-```shell
-uv sync
-```
-
-### run solver
-```shell
-uv run main.py
-```
-
-## development
-
-### lint
+## Quick Start
 
 ```shell
-uv run ruff check --fix src tests
+# Install dependencies
+make install
+
+# Run the solver
+make run
 ```
 
-### format
+## Development
 
 ```shell
-uv run ruff format src tests
+# Format and lint code
+make format
+make lint
+
+# Run tests
+make test
+
+# Run all checks
+make all
 ```
 
-### test
-
-```shell
-uv run pytest
-```
+Requires Python 3.9+.
