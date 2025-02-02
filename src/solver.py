@@ -4,10 +4,9 @@ from src.solution import Solution
 
 
 class Solver:
-    def __init__(self, dictionary: Dictionary) -> None:
-        self._dictionary = dictionary
-
-    def find_solutions(self, box: LetterBox) -> list[Solution]:
-        self._dictionary.prune(box)
+    @classmethod
+    def find_solutions(cls, dictionary: Dictionary, box: LetterBox) -> list[Solution]:
+        dictionary: Dictionary = dictionary.copy()
+        dictionary.prune(box)
 
         return []

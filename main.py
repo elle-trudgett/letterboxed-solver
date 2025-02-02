@@ -23,7 +23,7 @@ def main():
     dictionary: Dictionary = Dictionary.from_file(WORDS_FILENAME)
     box: LetterBox = create_box()
 
-    solutions: list[Solution] = Solver(dictionary).find_solutions(box)
+    solutions: list[Solution] = Solver.find_solutions(dictionary, box)
 
     print("Solutions:")
     for solution in solutions:

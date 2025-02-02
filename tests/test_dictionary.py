@@ -47,3 +47,25 @@ def test_prune():
         "The only valid word left for this box should be 'TURNIP'"
     )
     assert "turnip" in dictionary, "'TURNIP' should be in the dictionary"
+
+
+def test_copy():
+    dictionary: Dictionary = Dictionary()
+    dictionary.add("echo")
+    dictionary.add("foxtrot")
+
+    dictionary_copy = dictionary.copy()
+
+    assert dictionary.words == dictionary_copy.words, "Copied words should be equal"
+
+    dictionary.add("golf")
+
+    assert len(dictionary_copy.words) == 2, (
+        "Dictionary copy should not have been modified"
+    )
+
+    dictionary_copy.prune_side(Side("FOX"))
+
+    assert len(dictionary.words) == 3, (
+        "Original dictionary should not have been modified"
+    )

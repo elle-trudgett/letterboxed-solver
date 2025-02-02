@@ -9,6 +9,10 @@ from src.utils import upper_alpha
 class Dictionary:
     _words: list[str] = field(default_factory=list)
 
+    def __post_init__(self):
+        self._words = list(set(upper_alpha(w) for w in self._words))
+        self._words.sort()
+
     def add(self, word: str) -> None:
         word = upper_alpha(word)
 
@@ -31,6 +35,13 @@ class Dictionary:
             self.prune_side(side)
         self._words = list(filter(lambda w: box.contains_letters(w), self._words))
 
+    def copy(self) -> "Dictionary":
+        return Dictionary(list(self._words))
+
+    @property
+    def words(self) -> list[str]:
+        return list(self._words)
+
     @classmethod
     def from_file(cls, filename: str) -> "Dictionary":
         dictionary: Dictionary = cls()
@@ -46,3 +57,16 @@ class Dictionary:
 
     def __len__(self) -> int:
         return len(self._words)
+
+    def __str__(self) -> str:
+        word_preview: str = ""
+        if len(self._words) <= 4:
+            word_preview = ", ".join(self._words)
+        else:
+            word_preview = (
+                ", ".join(self._words[:2]) + ", ..., " + ", ".join(self._words[-2:])
+            )
+
+        return (
+            f"Dictionary({len(self)} words{': ' if word_preview else ''}{word_preview})"
+        )
