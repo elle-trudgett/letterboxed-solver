@@ -1,19 +1,27 @@
-.PHONY: install run lint format test all
+.PHONY: venv install run lint format test all clean
 
-install:
-	uv sync
+venv:
+	python -m venv .venv
+	.venv/bin/pip install uv
+	.venv/bin/uv pip install --upgrade pip
+
+install: venv
+	.venv/bin/uv sync
 
 run:
-	uv run main.py
+	.venv/bin/uv run main.py
 
 lint:
-	uv run ruff check --fix src tests
+	.venv/bin/uv run ruff check --fix src tests
 
 format:
-	uv run ruff format src tests
+	.venv/bin/uv run ruff format src tests
 
 test:
-	uv run pytest
+	.venv/bin/uv run pytest
+
+clean:
+	rm -rf .venv
 
 # Run format, lint, and test
 all: format lint test
