@@ -1,5 +1,7 @@
 # letterboxed-solver
 
+[![Tests](https://github.com/elle-trudgett/letterboxed-solver/actions/workflows/tests.yml/badge.svg)](https://github.com/elle-trudgett/letterboxed-solver/actions/workflows/tests.yml)
+
 solver for nyt letterboxed puzzle
 
 ### install
