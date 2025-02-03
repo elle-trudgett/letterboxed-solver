@@ -21,7 +21,7 @@ print(f"Loaded {len(dictionary)} words from {DICTIONARY_FILENAME}")
 game_urls: set[str] = set()
 archive_game_url_queue: queue.Queue = queue.Queue()
 src_queue: queue.Queue = queue.Queue()
-start_date: datetime = datetime(2024, 10, 1)
+start_date: datetime = datetime.now()
 
 
 async def get_closest(client: AsyncClient, timestamp: datetime) -> str | None:
