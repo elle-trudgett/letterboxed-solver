@@ -1,4 +1,4 @@
-.PHONY: venv install run lint format test all clean
+.PHONY: venv install install-dev run lint format test all clean
 .DEFAULT_GOAL := run
 
 venv:
