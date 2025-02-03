@@ -6,7 +6,7 @@ venv:
 	.venv/bin/uv pip install --upgrade pip
 
 install: venv
-	.venv/bin/uv sync
+	.venv/bin/uv sync --inexact
 
 install-dev: venv
 	.venv/bin/uv sync --all-extras
