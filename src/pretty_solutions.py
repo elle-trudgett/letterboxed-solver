@@ -14,7 +14,9 @@ def pretty_solutions(solutions: Iterable[Solution]) -> Iterable[Solution]:
         if solution_size is None:
             solution_size = len(solution)
         elif len(solution) > solution_size:
-            solution_bucket.sort(key=lambda s: (s.total_letters, s.max_word_size_difference))
+            solution_bucket.sort(
+                key=lambda s: (s.total_letters, s.max_word_size_difference)
+            )
 
             for soln in solution_bucket:
                 soln_word_set = set(soln.words)
