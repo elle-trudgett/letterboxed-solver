@@ -1,4 +1,4 @@
-# Uses WayBack Machine to grab previous Letter Boxed game data and updates dictionary file
+# Uses Wayback Machine to grab previous Letter Boxed game data and updates dictionary file
 import json
 import re
 import shutil

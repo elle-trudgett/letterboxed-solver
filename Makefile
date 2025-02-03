@@ -1,33 +1,31 @@
-# Silence all commands by default
-.SILENT:
-
 .PHONY: venv install run lint format test all clean
+.DEFAULT_GOAL := run
 
 venv:
-	python -m venv .venv 2>/dev/null || $(MAKE) --no-silent venv
-	.venv/bin/pip install uv >/dev/null 2>&1 || $(MAKE) --no-silent venv
-	.venv/bin/uv pip install --upgrade pip 2>/dev/null || $(MAKE) --no-silent venv
+	@python -m venv .venv
+	@.venv/bin/pip install -q uv
+	@.venv/bin/uv pip install -q --upgrade pip
 
 install: venv
-	.venv/bin/uv sync --inexact 2>/dev/null || $(MAKE) --no-silent install
+	@.venv/bin/uv sync -q --inexact
 
 install-dev: venv
-	.venv/bin/uv sync --all-extras 2>/dev/null || $(MAKE) --no-silent install-dev
+	@.venv/bin/uv sync -q --all-extras
 
 run: install
-	.venv/bin/uv run main.py || $(MAKE) --no-silent run
+	@.venv/bin/uv run main.py
 
 lint: install-dev
-	.venv/bin/uv run ruff check --fix src tests || $(MAKE) --no-silent lint
+	@.venv/bin/uv run ruff check --fix src tests
 
 format: install-dev
-	.venv/bin/uv run ruff format src tests || $(MAKE) --no-silent format
+	@.venv/bin/uv run ruff format src tests
 
 test: install-dev
-	.venv/bin/uv run pytest || $(MAKE) --no-silent test
+	@.venv/bin/uv run pytest
 
 clean:
-	rm -rf .venv || $(MAKE) --no-silent clean
+	@rm -rf .venv
 
 # Run format, lint, and test
 all: format lint test
