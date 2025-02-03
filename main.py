@@ -1,3 +1,4 @@
+from src.pretty_solutions import pretty_solutions
 from src.solver import Solver
 from src.dictionary import Dictionary
 from src.letterbox import LetterBox, BOX_SIDES
@@ -24,7 +25,7 @@ def main():
     solver: Solver = Solver(dictionary, box)
 
     num_solutions: int = 0
-    for solution in solver.solutions():
+    for solution in pretty_solutions(solver.solutions()):
         print(solution)
         num_solutions += 1
 
