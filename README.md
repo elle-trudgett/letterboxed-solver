@@ -10,6 +10,14 @@ with previous Letter Boxed game data from the [Internet Archive Wayback Machine]
 
 This is not intended to be a super-performant solver, but rather built with ❤️.
 
+<p align="center">
+  <picture align="center">
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/e4c9eeff-0294-4f90-84dc-3681020c42dc" width="50%" max-width="968px">
+    <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/a20ed2f1-5b35-4ad2-8aec-88277ea812db" width="50%" max-width="950px">
+    <img alt="Letter Boxed solver running in interactive mode." src="https://github.com/user-attachments/assets/a20ed2f1-5b35-4ad2-8aec-88277ea812db" width="50%" max-width="950px">
+  </picture>
+</p>
+
 ## Quick Start
 
 Configured with the [uv](https://github.com/astral-sh/uv) package manager.
