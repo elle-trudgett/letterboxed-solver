@@ -9,8 +9,11 @@ class Solution:
     def __init__(self, words: list[str]) -> None:
         self._words = [upper_alpha(word) for word in words]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return " -> ".join(self._words).upper()
+
+    def __repr__(self) -> str:
+        return f"Solution({self})"
 
     def __eq__(self, other: Any):
         if isinstance(other, Solution):

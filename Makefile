@@ -8,16 +8,19 @@ venv:
 install: venv
 	.venv/bin/uv sync
 
-run:
+install-dev: venv
+	.venv/bin/uv sync --all-extras
+
+run: install
 	.venv/bin/uv run main.py
 
-lint:
+lint: install-dev
 	.venv/bin/uv run ruff check --fix src tests
 
-format:
+format: install-dev
 	.venv/bin/uv run ruff format src tests
 
-test:
+test: install-dev
 	.venv/bin/uv run pytest
 
 clean:

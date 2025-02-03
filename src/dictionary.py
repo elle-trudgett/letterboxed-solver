@@ -8,13 +8,10 @@ from src.utils import upper_alpha
 
 @dataclass
 class Dictionary:
-    _words: list[str] = field(default_factory=list)
-    _sorted: bool = False
+    _words: set[str] = field(default_factory=set)
 
     def __post_init__(self):
-        self._words = list(set(upper_alpha(w) for w in self._words))
-        self._words.sort()
-        _sorted = True
+        self._words = set(upper_alpha(w) for w in self._words)
 
     def add(self, word: str) -> None:
         word = upper_alpha(word)
@@ -28,24 +25,22 @@ class Dictionary:
                 # Letterboxed doesn't have words with double letters
                 return
 
-        self._words.append(word)
-        self._sorted = False
+        self._words.add(word)
 
     def prune_side(self, side: Side) -> None:
-        self._words = list(filter(lambda w: side.valid_word(w), self._words))
+        self._words = set(filter(lambda w: side.valid_word(w), self._words))
 
     def prune(self, box: LetterBox) -> None:
         for side in box.sides:
             self.prune_side(side)
-        self._words = list(filter(lambda w: box.contains_letters(w), self._words))
+        self._words = set(filter(lambda w: box.contains_letters(w), self._words))
 
     def copy(self) -> "Dictionary":
-        return Dictionary(list(self._words))
+        return Dictionary(set(self._words))
 
     @property
     def words(self) -> list[str]:
-        self._words.sort() if not self._sorted else ...
-        return list(self._words)
+        return list(sorted(self._words))
 
     @classmethod
     def from_file(cls, filename: str) -> "Dictionary":
@@ -76,6 +71,14 @@ class Dictionary:
         )
 
     def __iter__(self) -> Iterator[str]:
-        self._words.sort() if not self._sorted else ...
-        for word in self._words:
+        for word in self.words:
             yield word
+
+    def remove(self, word: str) -> None:
+        word = upper_alpha(word)
+        if word in self._words:
+            self._words.remove(word)
+
+    def save(self, filename: str) -> None:
+        with open(filename, "w") as f:
+            f.write("\n".join(self.words))
