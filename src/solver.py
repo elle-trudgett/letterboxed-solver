@@ -18,7 +18,10 @@ class Solver:
         self._pre_solve()
 
     def solutions(self) -> Iterator[Solution]:
-        yield from self._find_solutions([], set(self._letterbox.letters))
+        for max_solution_length in range(1, 7):
+            yield from self._find_solutions(
+                [], max_solution_length, set(self._letterbox.letters)
+            )
 
     def _pre_solve(self):
         self._dictionary.prune(self._letterbox)
@@ -33,7 +36,7 @@ class Solver:
         self._prio_words.sort(reverse=True)
 
     def _find_solutions(
-        self, chain: list[str], letters_remaining: set[str]
+        self, chain: list[str], max_length: int, letters_remaining: set[str]
     ) -> Iterator[Solution]:
         last_letter: str = chain[-1][-1] if chain else ""
 
@@ -48,5 +51,5 @@ class Solver:
             updated_chain: list[str] = chain[:] + [word]
             if not letters_left:
                 yield Solution(updated_chain)
-            else:
-                yield from self._find_solutions(updated_chain, letters_left)
+            elif len(updated_chain) < max_length:
+                yield from self._find_solutions(updated_chain, max_length, letters_left)
