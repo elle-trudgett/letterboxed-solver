@@ -6,6 +6,7 @@ import shutil
 import trio
 import queue
 from datetime import datetime, timedelta
+
 from typing import Any
 
 from httpx import AsyncClient, Response
@@ -14,19 +15,20 @@ from src.dictionary import Dictionary
 from src.letterbox import LetterBox
 
 DICTIONARY_FILENAME = "words.txt"
+ARCHIVE_TIMESTEP = timedelta(days=1)
 
 dictionary: Dictionary = Dictionary.from_file(DICTIONARY_FILENAME)
 print(f"Loaded {len(dictionary)} words from {DICTIONARY_FILENAME}")
 
-game_urls: set[str] = set()
 archive_game_url_queue: queue.Queue = queue.Queue()
 src_queue: queue.Queue = queue.Queue()
 start_date: datetime = datetime.now()
+seen_urls: set[str] = set()
 
 
 async def get_closest(client: AsyncClient, timestamp: datetime) -> str | None:
-    api_url = f"https://archive.org/wayback/available?url=https://www.nytimes.com/puzzles/letter-boxed&timestamp={timestamp.strftime('%Y%m%d')}"
-    print(f"Looking for archived game on {timestamp.strftime('%Y-%m-%d')}.")
+    api_url = f"https://archive.org/wayback/available?url=https://www.nytimes.com/puzzles/letter-boxed&timestamp={timestamp.strftime('%Y%m%d%H%M%S')}"
+    print(f"Looking for archived game at {timestamp.strftime('%Y-%m-%d %H:%M:%S')}.")
     api_response: Response = await client.get(api_url)
     api_response.raise_for_status()
     response_json = api_response.json()
@@ -36,21 +38,21 @@ async def get_closest(client: AsyncClient, timestamp: datetime) -> str | None:
         return None
 
 
-async def fetch_archived_games():
+async def fetch_archived_games() -> None:
     """Queries the archive.org API to get archived Letter Boxed game URLs and queues them for fetching."""
     date: datetime = start_date
     async with AsyncClient(timeout=10000) as client:
         while True:
             url: str | None = await get_closest(client, date)
-            if url is None or url in game_urls:
-                date -= timedelta(days=1)
+            if url is None or url in seen_urls:
+                date -= ARCHIVE_TIMESTEP
                 continue
-            game_urls.add(url)
+            seen_urls.add(url)
             archive_game_url_queue.put(url)
-            date -= timedelta(days=1)
+            date -= ARCHIVE_TIMESTEP
 
 
-async def fetch_game_data():
+async def fetch_game_data() -> None:
     """Fetches archived Letter Boxed games and queues the HTML source for processing."""
     async with AsyncClient(timeout=10000) as client:
         while True:
@@ -63,9 +65,18 @@ async def fetch_game_data():
                 try:
                     print(f"Fetching game: {game_url}...")
                     response: Response = await client.get(game_url)
+                    if response.status_code == 302:
+                        new_location: str | None = response.headers.get("Location", None)
+                        if new_location:
+                            print(f"Redirected to {new_location}.")
+                            if new_location not in seen_urls:
+                                seen_urls.add(new_location)
+                                archive_game_url_queue.put(new_location)
+                            break
                     response.raise_for_status()
                     src = response.text
                     src_queue.put(src)
+                    seen_urls.add(src)
                     break
                 except:
                     print(f"❌ Failed to fetch game {game_url}")
@@ -76,6 +87,9 @@ async def fetch_game_data():
 
 
 async def sync():
+    # Add today's game to the fetch queue.
+    archive_game_url_queue.put("https://www.nytimes.com/puzzles/letter-boxed")
+
     async with trio.open_nursery() as nursery:
         nursery.start_soon(fetch_archived_games)
         nursery.start_soon(fetch_game_data)
@@ -139,7 +153,7 @@ async def processor():
             shutil.copyfile(DICTIONARY_FILENAME, DICTIONARY_FILENAME + ".bak")
             print(f"  --> 💾 Saved {len(dictionary)} words to {DICTIONARY_FILENAME}.")
         else:
-            print(f"  --> 🟡 No change.")
+            print(f"  --> 🟡 No change ({len(dictionary)} words in dictionary.)")
 
         print()
 

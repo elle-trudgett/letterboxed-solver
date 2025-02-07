@@ -7,7 +7,7 @@ WORDS_FILENAME = "words.txt"
 
 
 def create_box() -> LetterBox:
-    print("Example: igs wrk bpl anc")
+    print("Example: cle pvt uoa rgi")
     return LetterBox.from_string(input("Enter letters: "))
 
 
